@@ -1,55 +1,8 @@
 import sys
 import yaml
 import flask
-import re
-import urllib3
-from urllib.parse import urlparse
 
 app = flask.Flask(__name__)
-
-def is_safe_url(url):
-    """Validate URL to prevent SSRF attacks"""
-    if not url:
-        return False
-        
-    # Parse the URL
-    parsed = urlparse(url)
-    
-    # Check for allowed schemes
-    if parsed.scheme not in ['http', 'https']:
-        return False
-        
-    # Check for private/internal IP addresses
-    hostname = parsed.netloc.split(':')[0]
-    
-    # Block localhost and variants
-    if hostname in ['localhost', '127.0.0.1', '0.0.0.0', '::1']:
-        return False
-        
-    # Block private IPs (simplified check)
-    if re.match(r'^(10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.|192\.168\.)', hostname):
-        return False
-        
-    return True
-
-def fetch_website(urllib_version, url):
-    # Validate URL before making request
-    if not url or not is_safe_url(url):
-        return "Error: Invalid or potentially malicious URL"
-    
-    # Use conditional logic instead of exec
-    if urllib_version == '2':
-        import urllib2 as urllib
-        http = urllib.PoolManager()
-        r = http.request('GET', url)
-        return r.data.decode('utf-8')
-    elif urllib_version == '3':
-        import urllib3 as urllib
-        http = urllib.PoolManager()
-        r = http.request('GET', url)
-        return r.data.decode('utf-8')
-    else:
-        return "Invalid urllib version. Use '2' or '3'."
 
 
 def safe_input(prompt):
@@ -73,6 +26,22 @@ class Person(object):
 
 def print_nametag(format_string, person):
     print(format_string.format(person=person))
+
+
+def fetch_website(urllib_version, url):
+    # Use conditional logic instead of exec
+    if urllib_version == '2':
+        import urllib2 as urllib
+        http = urllib.PoolManager()
+        r = http.request('GET', url)
+        print(r.data)
+    elif urllib_version == '3':
+        import urllib3 as urllib
+        http = urllib.PoolManager()
+        r = http.request('GET', url)
+        print(r.data)
+    else:
+        print("Invalid urllib version. Use '2' or '3'.")
 
 
 def load_yaml(filename):
