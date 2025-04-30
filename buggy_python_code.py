@@ -24,15 +24,19 @@ def print_nametag(format_string, person):
 
 
 def fetch_website(urllib_version, url):
-    # Import the requested version (2 or 3) of urllib
-    exec(f"import urllib{urllib_version} as urllib", globals())
-    # Fetch and print the requested URL
- 
-    try: 
+    # Use conditional logic instead of exec
+    if urllib_version == '2':
+        import urllib2 as urllib
         http = urllib.PoolManager()
         r = http.request('GET', url)
-    except:
-        print('Exception')
+        print(r.data)
+    elif urllib_version == '3':
+        import urllib3 as urllib
+        http = urllib.PoolManager()
+        r = http.request('GET', url)
+        print(r.data)
+    else:
+        print("Invalid urllib version. Use '2' or '3'.")
 
 
 def load_yaml(filename):
@@ -62,6 +66,6 @@ if __name__ == '__main__':
         load_yaml(input("File name: "))
         print("Executed -ls on current folder")
     elif choice == "4":
-        password = input("Enter master password: ")
-        authenticate(password)
+        entered_pwd = input("Enter master password: ")
+        authenticate(entered_pwd)
 
