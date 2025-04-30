@@ -1,10 +1,15 @@
-import sys 
-import os
+import sys
 import yaml
 import flask
 
 app = flask.Flask(__name__)
 
+
+def safe_input(prompt):
+    if sys.version_info[0] < 3:  # Python 2
+        return raw_input(prompt)
+    else:  # Python 3
+        return input(prompt)
 
 @app.route("/")
 def index():
@@ -55,17 +60,17 @@ if __name__ == '__main__':
     print("2. Code injection vulnerability:")
     print("3. Yaml deserialization vulnerability:")
     print("4. Use of assert statements vulnerability:")
-    choice  = input("Select vulnerability: ")
+    choice  = safe_input("Select vulnerability: ")
     if choice == "1": 
         new_person = Person("Vickie")  
-        print_nametag(input("Please format your nametag: "), new_person)
+        print_nametag(safe_input("Please format your nametag: "), new_person)
     elif choice == "2":
-        urlib_version = input("Choose version of urllib: ")
+        urlib_version = safe_input("Choose version of urllib: ")
         fetch_website(urlib_version, url="https://www.google.com")
     elif choice == "3":
-        load_yaml(input("File name: "))
+        load_yaml(safe_input("File name: "))
         print("Executed -ls on current folder")
     elif choice == "4":
-        entered_pwd = input("Enter master password: ")
+        entered_pwd = safe_input("Enter master password: ")
         authenticate(entered_pwd)
 
